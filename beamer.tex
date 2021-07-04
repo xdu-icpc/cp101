@@ -524,6 +524,133 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
+\subsection{非法访问}
+\begin{frame}{无效指针}
+	\begin{itemize}
+		\item 未初始化的指针
+			\begin{itemize}
+				\item 和一般未初始化值一样，使用就是未定义行为
+			\end{itemize}
+		\item 空指针
+			\begin{itemize}
+				\item 只能用作哨兵值（sentinel）
+			\end{itemize}
+		\item 指向数组最后一个元素“之后一个元素”的指针
+			\begin{itemize}
+				\item 可以构造出来，例如
+					\lstinline[language=C++]!sort(a, a+n);!
+				\item 可以用于偏移运算，例如
+					\lstinline[language=C++]!int *p = a+n; a[-2];!
+				\item 不能解引用，否则引发未定义行为
+			\end{itemize}
+		\item 越出数组界限的指针
+			\begin{itemize}
+				\item 对不指向数组中元素的指针进行偏移运算是未定义的
+				\item 对指向数组中元素的指针进行偏移运算，
+					越出数组范围（结果不指向同一数组中的元素，
+					或该数组最后一个元素“之后的一个元素”），
+					行为是未定义的
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{无效指针的危害}
+	\begin{itemize}
+		\item RE、WA、TLE、MLE 都有可能
+		\item 可能严重干扰调试器
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{预防和排查}
+	\begin{itemize}
+		\item 数组开到足够大
+		\item 对指针和数组下标进行必要检查
+			\begin{itemize}
+				\item
+\lstinline[language=C++]!for (; j < n && a[j] < b[i]; j++) foo(j);!
+			\end{itemize}
+		\item 不要乱用指针
+		\item 如果本地测试出现问题，怀疑无效指针，可以打开相关运行时检查
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{无效的迭代器}
+	\begin{itemize}
+		\item 和指针一样，迭代器也不能越界
+		\item 此外，在一些（可能意想不到的）情况下，
+			迭代器会失效变成非法的
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{一个例子}
+	我们希望删掉一个 \lstinline!std::set! 里面所有的偶数：
+	\lstcode{set_invalidate.cc}
+\end{frame}
+
+\begin{frame}{然后就炸了}
+	\lstterm{set_invalidate.out}
+\end{frame}
+
+\begin{frame}{哪里有迭代器？}
+	根据语言标准，循环
+	\lstinputlisting[language=C++,firstline=8,lastline=10,numbers=none]
+	{code/set_invalidate.cc}
+	等价于
+	\lstinputlisting[language=C++,firstline=8,lastline=15,numbers=none]
+	{code/set_invalidate_trans.cc}
+	\pause
+	\begin{itemize}
+		\item 删掉一个偶数以后，指向它的迭代器 \lstinline!__begin!
+			就失效了，然后再使用这个迭代器就会发生未定义行为
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{正确的写法}
+	先自增，再删除：
+\begin{lstlisting}[language=C++, numbers=none]
+for (auto it = S.begin(); it != S.end(); )
+    if (*it % 2 == 0)
+		S.erase(it++); // or: it = S.erase(it);
+    else
+        it++;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{另一个例子}
+	你可能认为不删除就没问题了，然而……
+	\lstcode{vec_invalidate.cc}
+\end{frame}
+
+\begin{frame}{又爆炸了}
+	\lstterm{vec_invalidate.out}
+	\begin{itemize}
+		\item 什么鬼？
+			\pause
+		\item 这是因为 \lstinline|vector| 在插入元素时，
+			可能需要重新分配一段更大的内存，并搬移原有元素，
+			从而导致之前的迭代器失效
+			\pause
+		\item 改用下标就行了
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{防范和排查}
+	\begin{itemize}
+		\item 不要滥用迭代器
+		\item 使用 range-based for 循环时，
+			最好不要对被迭代的容器进行插入或删除操作
+		\item 在 \lstinline|set|、\lstinline|map|、
+			\lstinline|multiset|、\lstinline|multimap|、
+			\lstinline|list| 等中进行删除操作时，可以使用
+			\lstinline|c.erase(it++)| 的写法
+			\begin{itemize}
+				\item 对于 C++11 以上，还支持 \lstinline|it = c.erase(it)|
+					的写法
+			\end{itemize}
+		\item 如果怀疑使用了无效迭代器，可以打开 C++ 标准库的运行时检查
+	\end{itemize}
+\end{frame}
+
 {\xdbg%末页致谢
 \begin{frame}[plain,noframenumbering]
  \finalpage{{\huge 感谢观看！}}
