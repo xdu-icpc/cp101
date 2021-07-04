@@ -424,7 +424,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 
 \begin{frame}{什么是栈溢出}
 	\begin{itemize}
-		\item 函数调用的过程中会把一些数据（返回地址，局部变量，部分参数）
+		\item 函数调用的过程中会把一些数据 (返回地址，局部变量，部分参数)
 			放入系统的栈空间中，调用结束后再弹出。
 		\item 为了更灵活地为堆和共享库分配内存，Linux 默认将栈空间限制在 8MB。
 		\item 如果栈的大小越过 8MB，内核会发送 \lstinline!SIGSEGV!
@@ -457,7 +457,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 				\item 只对当前终端开出来的进程有效
 				\item 这会导致死递归难以排查，甚至卡死系统，
 					可以选择折中地把栈调大一点：
-					\lstinline|ulimit -s 131072| （单位 KB）
+					\lstinline|ulimit -s 131072| (单位 KB)
 			\end{itemize}
 		\item 对于递归，本机测试开与评测时相同的优化
 			(例如 \lstinline|-O2|)，防止误判
@@ -473,6 +473,55 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 \begin{frame}{汇编开栈}
 	暗黑魔法，使用时自负风险。
 	\lstinputlisting[language=C++]{code/asm_stack.cc}
+\end{frame}
+
+\subsection{整数溢出}
+\begin{frame}{整数溢出}
+	以下属于未定义行为：
+	\begin{itemize}
+		\item 带符号整数算术运算溢出
+		\item 移位位数超过整数位数
+		\item 使用 \lstinline{scanf} 读取数字时，
+			输入超过格式化字符串指定的表示范围
+		\item 浮点数转化为整数时，其值超过了整数类型能表示的范围
+			\begin{itemize}
+				\item<2> 欧洲的 Ariane 5 型运载火箭首飞即因为代码中
+					64 位浮点值向 16 位整数转换时发生此类错误而坠毁
+			\end{itemize}
+	\end{itemize}
+	以下行为可能导致出人意料的结果：
+	\begin{itemize}
+		\item 无符号整数算术运算溢出 (丢弃高位)
+		\item 使用 \lstinline{cin} 读取数字时，
+			输入超过变量的表示范围 (读入错误的值，并设定
+			\lstinline{failbit})
+		\item 整数类型互相转化时高位被丢弃
+		\item 浮点数转化为整数时小数部分被截断
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{整数溢出的后果}
+	\begin{itemize}
+		\item 大部分会 WA，可能会 RE 甚至 TLE。
+		\item 在测试时你的程序可能莫名其妙输出负数。
+	\end{itemize}
+	\lstinputlisting[language=C++]{code/snip_overflow_tle.cc}
+\end{frame}
+
+\begin{frame}{预防和排查}
+	\begin{itemize}
+		\item 开始编码前预先考虑好输入、中间结果、最终结果的可能范围
+		\item 该取模的取
+		\item 该开 64 位和 128 位整数的开
+		\item 该转型的转：\lstinline!1ll * a * b!
+		\item 该换语言的换
+		\item 该写高精度的写
+		\item 打开编译器相关警告选项
+		\item 编造数据测试是否有溢出
+		\item 如果测试过程中发现溢出，打开运行时检查工具
+		\item 如果确实需要溢出，使用无符号整数
+		\item 反对盲目蛮干
+	\end{itemize}
 \end{frame}
 
 {\xdbg%末页致谢
