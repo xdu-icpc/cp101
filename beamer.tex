@@ -13,6 +13,8 @@
     RawFeature={instance=Regular},
     BoldFont=Noto Sans Mono,
     BoldFeatures={RawFeature={instance=Bold}},
+    ItalicFont=Noto Sans Mono,
+    ItalicFeatures={RawFeature={instance=Italic}},
 ]{Noto Sans Mono}
 
 \definecolor{xdublue}{RGB}{0,65,130}
@@ -133,30 +135,30 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	使得程序变得更小或更快。
 \end{frame}
 
-\begin{frame}[fragile]{例}{Hello world}
+\begin{frame}{例}{Hello world}
 	\lstcode{hw.cc}
 \end{frame}
 
-\begin{frame}[fragile]{例}{Hello World}
+\begin{frame}{例}{Hello World}
 	生成的汇编代码根本没有 \texttt{printf}？
 	\lstinputlisting[style=term,emph={puts},emphstyle=\color{xdublue}]
 	{code/hw.out}
 \end{frame}
 
-\begin{frame}[fragile]{例}{取模}
+\begin{frame}{例}{取模}
 	\lstcode{mod.cc}
 \end{frame}
 
-\begin{frame}[fragile]{例}{取模}
+\begin{frame}{例}{取模}
 	没有除法指令？
 	\lstterm{mod.out}
 \end{frame}
 
-\begin{frame}[fragile]{例}{取模 (误)}
+\begin{frame}{例}{取模 (误)}
 	\lstcode{mod_bad.cc}
 \end{frame}
 
-\begin{frame}[fragile]{例}{取模 (误)}
+\begin{frame}{例}{取模 (误)}
 	\lstinputlisting[style=term,emph={idivl},emphstyle=\color{xdublue}]
 	{code/mod_bad.out}
 	\begin{itemize}
@@ -167,14 +169,14 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strstr (Linux)}
+\begin{frame}{例}{strstr (Linux)}
 	\lstcode{strstr.cc}
 	\begin{itemize}
 		\item 这题不用 KMP 能过？
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strstr (Linux)}
+\begin{frame}{例}{strstr (Linux)}
 	\lstterm{strstr.out}
 	\begin{itemize}
 		\item 在 Linux 上跑得飞快
@@ -184,28 +186,28 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strlen (运气好)}
+\begin{frame}{例}{strlen (运气好)}
 	\lstcode{strlen-1.cc}
 	\begin{itemize}
 		\item 目测是 $\mathcal{O}(n^2)$ 的，会 TLE？
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strlen (运气好)}
+\begin{frame}{例}{strlen (运气好)}
 	\lstterm{strlen-1.out}
 	\begin{itemize}
 		\item 然而跑得飞快
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strlen (运气差)}
+\begin{frame}{例}{strlen (运气差)}
 	\lstcode{strlen-2.cc}
 	\begin{itemize}
 		\item 就改个大小写，不会出大问题吧
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{strlen (运气差)}
+\begin{frame}{例}{strlen (运气差)}
 	\lstterm{strlen-2.out}
 	\begin{itemize}
 		\item 人都没了
@@ -222,7 +224,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{实现定义的行为}
+\begin{frame}{实现定义的行为}
 	标准要求实现作出一致的选择。
 	\begin{itemize}
 		\item 一个典型例子是 \lstinline{rand} 函数生成随机数的规则
@@ -246,14 +248,14 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}
+\begin{frame}{例}
 	\lstcode{unspecified.cc}
 	\begin{itemize}
 		\item 如果实现先对后一个 \lstinline{read()} 求值怎么办？
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{修复}
+\begin{frame}{修复}
 	\lstcode{unspecified-fix.cc}
 	\begin{itemize}
 		\item 语言标准要求初始化列表中的元素必须从左到右求值。
@@ -279,7 +281,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{例}{函数无返回值}
+\begin{frame}{例}{函数无返回值}
 	\begin{columns}[t]
 		\begin{column}{.5\textwidth}
 			\begin{itemize}
