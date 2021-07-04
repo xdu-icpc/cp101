@@ -1,4 +1,5 @@
-#include <cstdlib>
+#include <bits/stdc++.h>
+__attribute__((aligned(32)))
 char _s_t_a_c_k_[128 << 20];
 int main()
 {
@@ -8,8 +9,9 @@ int main()
 #else
 		"movl %0, %%esp"
 #endif
-		::"r"(_s_t_a_c_k_+(128<<20)):
+		::"r"(_s_t_a_c_k_+(128 << 20)):
 	);
 
-	exit(0);
+	fclose(stdout);
+	_Exit(0);
 }
