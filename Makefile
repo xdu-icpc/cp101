@@ -12,6 +12,11 @@ OUTFILES = hw.out                  \
 GENERATED = *.aux *.fdb_latexmk *.fls *.log *.nav *.out *.pdf *.snm *.toc \
 			*.vrb
 
+.PHONY: beamer
+beamer: $(STYFILES)
+	make -C code $(OUTFILES)
+	latexmk --lualatex beamer
+
 .PHONY: clean
 clean:
 	rm -fv $(GENERATED)
@@ -20,11 +25,6 @@ clean:
 .PHONY: .gitignore
 .gitignore:
 	echo "$(GENERATED)" | sed 's/ /\n/g' > $@
-
-.PHONY: beamer
-beamer: $(STYFILES)
-	make -C code $(OUTFILES)
-	latexmk --lualatex beamer
 
 $(STYFILES): theme/XDUstyle.dtx
 	cd theme; xelatex XDUstyle.dtx
