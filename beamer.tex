@@ -337,7 +337,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{center}
 \end{frame}
 
-\section{程序查错技巧}
+\section{常见编程错误}
 \sectionpage
 
 \begin{frame}{概述}
@@ -697,7 +697,7 @@ for (auto it = S.begin(); it != S.end(); )
 \begin{frame}{预防}
 	\begin{itemize}
 		\item \lstinline!float! 这种东西就别用了吧……
-		\item 如果要输出的东西本身就是一个浮点值（如长度、面积），
+		\item 如果要输出的东西本身就是一个浮点值 (如长度、面积)，
 			那么可以放心使用 \lstinline!double!，
 			但要注意控制精度，防止出现数值稳定性问题
 			\begin{itemize}
@@ -769,6 +769,230 @@ for (auto it = S.begin(); it != S.end(); )
 			的比较函数是假的？
 		\item 在没排序的数组上执行 \lstinline|lower_bound| 等二分查找函数？
 		\item 可以打开 C++ 运行库的运行时检查，来寻找可能的这种错误
+	\end{itemize}
+\end{frame}
+
+\section{调试技巧}
+\begin{frame}{调试技巧}
+	\begin{itemize}
+		\item 下面介绍一些比赛/训练时可能有用的调试技巧
+	\end{itemize}
+\end{frame}
+
+\subsection{编译警告}
+\begin{frame}{编译警告}
+	建议使用的警告选项：
+	\begin{itemize}
+		\item \lstinline|-Wall -Wextra|
+		\item \lstinline|-Wshadow|：防止局部变量不小心遮盖其他变量
+		\item \lstinline|-Wformat=2|：防止 \lstinline|printf|/
+			\lstinline|scanf| 写错
+		\item \lstinline|-Wconversion|：防止意外的类型转换
+	\end{itemize}
+	某些情况下有用的警告选项：
+	\begin{itemize}
+		\item \lstinline|-Wstack-usage=1|：看栈空间使用情况
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{例子}
+	\lstinputlisting[language=C++]{code/matrix_bug.cc}
+\end{frame}
+
+\begin{frame}{错误}
+	编译器立刻说出我忘了写 \lstinline[language=C++]!return! 语句：
+	\lstinputlisting[style=term]{code/matrix_bug.out}
+\end{frame}
+
+\begin{frame}{另一个例子}
+	\lstinputlisting[language=c++]{code/pow_mod_bug.cc}
+\end{frame}
+
+\begin{frame}{编译警告}
+	\lstinputlisting[style=term]{code/pow_mod_bug.out}
+	可以看出是抄快速幂板子忘了改参数类型。
+\end{frame}
+
+\subsection{运行期检查}
+\begin{frame}{运行期检查}
+	编译警告虽然很有用，但由于停机问题是不可解的，
+	不可能在编译期找出所有错误，这就需要使用运行期检查。
+	下面介绍一些有用的，可以在区域赛使用的运行期检查工具：
+	\begin{itemize}
+		\item Undefined Behavior Sanitizer
+		\item Address Sanitizer
+		\item Libstdc++ Debug Mode
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{UBSan}
+	使用编译选项 \lstinline!-fsanitize=undefined -g! 开启，
+	用于寻找未定义行为。我们用一个初学者经常写出来的程序演示一下：
+	\lstinputlisting[language=C++]{code/overflow.cc}
+\end{frame}
+
+\begin{frame}{测试结果}
+	\lstinputlisting[style=term]{code/overflow.out}
+\end{frame}
+
+\begin{frame}{局限性}
+	UBSan 虽然也能检测到一些越界访问的情况 (毕竟这种情况也属于未定义行为)，
+	但对于稍微复杂一些的越界 (涉及动态内存分配或者一些库函数) 就无能为力了。
+	例如：
+	\lstinputlisting[language=C++]{code/scanf_bound.cc}
+\end{frame}
+
+\begin{frame}{隐蔽的越界}
+	这个程序就算开了 UBSan 也能正常运行，甚至在越界不多时，仍输出正确答案：
+	\lstinputlisting[style=term]{code/scanf_bound.out}
+	然而交上去就自闭了……
+\end{frame}
+
+\begin{frame}{ASan！}
+	这时就需要更专业的 Address Sanitizer 了，我们使用
+	\lstinline|-fsanitize=address -g| 启用它：
+	\lstinputlisting[style=term,lastline=4]{code/scanf_bound_asan.out}
+	……
+	\lstinputlisting[style=term,firstline=9,lastline=9]{code/scanf_bound_asan.out}
+\end{frame}
+
+\begin{frame}{libstdc++}{调试模式}
+	编译时使用 \lstinline!-D_GLIBCXX_DEBUG! 打开调试模式。
+	此时 libstdc++ 会插入两项运行时检查：
+	\begin{itemize}
+		\item 迭代器安全性检查
+		\item 算法前提条件检查
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{例子}
+	我们用前面那个错误使用 \lstinline!vector! 的迭代器的程序演示一下：
+	\lstinputlisting[language=C++]{code/vec_invalidate.cc}
+\end{frame}
+
+\begin{frame}{运行结果}
+	\lstinputlisting[style=term,lastline=12]{code/vec_invalidate_debug.out}
+\end{frame}
+
+\begin{frame}{另一个例子}
+	如果忘了排序就二分查找：
+	\lstinputlisting[language=C++]{code/bsearch_buggy.cc}
+\end{frame}
+
+\begin{frame}{运行结果}
+	\lstinputlisting[style=term,lastline=9]{code/bsearch_buggy.out}
+\end{frame}
+
+\subsection{对拍}
+\begin{frame}{对拍}
+	如果某题要求时间复杂度 $\mathcal{O}(nlogn)$，你写好以后交上去 WA 了，
+	又找不到错，可以写个 $\mathcal{O}(n^2)$ 的暴力，然后用 $n = 1000$
+	左右的随机数据去检验。
+	\begin{itemize}
+		\item 前提是你暴力能写对
+		\item 要小心，有时候随机数据并不能拍出所有 bug
+		\item 数据范围可以放小一些 (比如 $n = 10$)
+		\item (训练时) 如果你有别人 (或者自己) 已经 AC 的程序也可以用来拍
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{造数据}
+	下面给出一个简单的数据生成器：
+	\lstinputlisting[language=Python]{code/generator.py}
+	\begin{itemize}
+		\item 用 Python 是因为写起来短，而且随机数生成不会像 C 的
+			\lstinline{rand} 那样呈现 implementation-defined 行为
+		\item 读入种子是为了保证可重复性，
+			只要记录下生成拍出错误的数据的种子，
+			就能随时重新生成这组数据
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{简单的对拍器}
+	\lstinputlisting[language=bash]{code/tester.sh}
+\end{frame}
+
+\subsection{白盒调试}
+\begin{frame}{白盒调试}
+	如果我们用上面的方法发现了错误，但不知道为什么，
+	就可能需要分析程序的执行过程……
+\end{frame}
+
+\begin{frame}{输出中间结果}
+	调试宏：
+	\lstinputlisting[language=C++]{code/debug_macro.cc}
+	输出的效果：\lstinline!L12: something = 233!
+\end{frame}
+
+\begin{frame}{断言}
+	\lstinline|<cassert>| 提供了 \lstinline|assert| 宏，
+	可以用来确保前提条件的成立。
+	\begin{itemize}
+		\item 例如，BSGS 算法要求 $a$ 和 $M$ 互质，
+			我们可以在自己的 BSGS 模板里面加上
+			\lstinline|assert(gcd(a, M) == 1);|
+		\item 如果使用 BSGS 时不满足这个条件，程序就会报错退出
+		\item 同时，它也可以在敲模板的时候提醒你 BSGS 只能用于这种情况
+		\item 提交代码时可以在程序开头加 \lstinline|\#define NDEBUG|，
+			关闭所有断言，以避免不必要的运行时间
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{使用调试器}
+	建议直接使用 GDB 的命令行，Code::Blocks 的调试非常难用。
+	调试时需要打开编译选项 \lstinline!-g!，建议禁用优化。
+	GDB 的常用命令有：
+	\begin{itemize}
+		\item b (breakpoint) 行号/函数名
+		\item r (run) [< 输入文件名]
+		\item n (next)
+		\item s (step)
+		\item c (continue)
+		\item p (print) 表达式
+		\item d (disp) 表达式
+		\item cond (condition) 断点编号 \  表达式
+		\item bt (backtrace)
+		\item fr (frame) 栈帧编号
+	\end{itemize}
+\end{frame}
+
+\subsection{性能分析}
+\begin{frame}{性能分析工具}
+	\begin{itemize}
+		\item gcov/\lstinline|-ftest-coverage -fprofile-arcs|：
+			代码覆盖率检测，可以看代码中每一行被执行的次数
+		\item gprof/\lstinline|-pg|：
+			代码剖析，可以看函数执行时间占总时间的百分比
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{例子}
+	BAPC 2018 E 题的一份 TLE 代码。我们先造一个大数据试一下：
+	\lstinputlisting[style=term]{code/bapc2018e-time.out}
+	可以看到跑得很慢。
+\end{frame}
+
+\begin{frame}{使用 gprof}
+	\lstinputlisting[style=term, lastline=10]{code/bapc2018e-gprof.out}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{使用 gcov}
+	\lstinputlisting[style=term]{code/bapc2018e-gcov.out}
+\end{frame}
+
+\begin{frame}{结论}
+	\begin{itemize}
+		\item 两种方法都能发现快速幂使用了过多时间
+		\item gprof 输出的是时间，但只能精确到函数
+		\item gcov 精确到行，但只能输出调用次数
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{求助他人 (鸭？)}
+	\begin{itemize}
+		\item 找别人帮忙调程序几乎一定会破坏友谊
+		\item 如果一定要找，把代码的可读性弄得好一点……
+		\item 小黄鸭调试法
 	\end{itemize}
 \end{frame}
 
