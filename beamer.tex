@@ -205,6 +205,116 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{几类行为}
+	\begin{itemize}
+		\item 标准定义的行为
+		\item 实现定义的行为 (implementation-defined)
+		\item 未指定行为 (unspecified)
+		\item 未定义行为 (undefined)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{实现定义的行为}
+	标准要求实现作出一致的选择。
+	\begin{itemize}
+		\item 一个典型例子是 \lstinline{rand} 函数生成随机数的规则
+			(包括但不限于 \lstinline{RAND_MAX} 的值)，
+			这在 2020 -- 2021 ICPC 区域赛南京站产生了显著的影响。
+		\item 另一个例子是 FFT 等场合常用的卡常技巧
+			\lstinline{a += M & (a >> 31);}，它的目的是将
+			$[-M, M)$ 中的整数模 $M$ (变为 $[0, M)$ 中的整数)。
+			其正确性依赖于 GCC 规定负数右移按算术右移规则进行，
+			如果更换编译器则可能出错。
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{未指定行为}
+	标准未作说明，允许实现随意选择。
+	\begin{itemize}
+		\item 几乎所有程序都会涉及未指定行为，例如函数调用时，
+			对其参数求值的顺序就是未指定的。
+		\item 但是，如果你的 (比赛用) 程序的输出依赖于某个未指定行为，
+			那么很有可能产生难以调试的 bug。
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}
+	\lstcode{unspecified.cc}
+	\begin{itemize}
+		\item 如果实现先对后一个 \lstinline{read()} 求值怎么办？
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{修复}
+	\lstcode{unspecified-fix.cc}
+	\begin{itemize}
+		\item 语言标准要求初始化列表中的元素必须从左到右求值。
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{未定义行为}
+	\begin{itemize}
+		\item 语法错误
+		\item 语义错误
+			\begin{itemize}
+				\item 违反约束条件 (constraint)：要求编译器将其视为编译错误
+				\item 其他：未定义行为，实现可以干任何事！
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{未定义行为}
+	\begin{itemize}
+		\item “什么都可能发生”
+		\item 在没有操作系统或操作系统欠缺安全机制时，甚至能够损毁硬件
+		\item 在比赛中可能产生“本地测不出来 bug，但交上去就错”的问题
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{函数无返回值}
+	\begin{columns}[t]
+		\begin{column}{.5\textwidth}
+			\begin{itemize}
+				\item 一类十分值得注意的未定义行为是，
+					在非 \lstinline{void} 函数中，程序流程到达函数尾。
+				\item 注意此时无论是否实际使用了该函数的返回值，
+					只要程序执行到函数尾，都是未定义行为。
+				\item 在编译器执行优化时，它可能假设
+					“程序永远不会执行到该函数的尾部”，
+					从而产生更加奇怪的行为。
+				\item \textbf{老资格的 OI 选手}需要特别注意！
+			\end{itemize}
+		\end{column}
+		\begin{column}{.5\textwidth}
+			\lstcode{no-return.cc}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{没有银弹}
+	\begin{center}
+	\begin{tikzpicture}[fill=xdublue]
+		\def\outbox{(-2, -2) rectangle(3, 3)}
+		\def\firstcircle{(0, 0) circle(1)}
+		\def\secondcircle{(1, 0) circle(1)}
+		\def\thirdcircle{(0.5, 1) circle(1)}
+		\fill[even odd rule]
+		\outbox \firstcircle \secondcircle \thirdcircle;
+		\draw \firstcircle node[left] {安全};
+		\draw \secondcircle node[right] {高效};
+		\draw \thirdcircle node[above] {易用};
+		\draw \firstcircle node[shift={(-0.1,0.6)}]
+		{\textcolor{white}{慢}};
+		\draw \secondcircle node[shift={(0.1,0.6)}]
+		{\textcolor{white}{\tiny 不安全}};
+		\draw \thirdcircle node[shift={(0,-1.2)}]
+		{\textcolor{white}{难学}};
+		\draw \thirdcircle node[shift={(0,-0.6)}] {???};
+		\draw \outbox node[shift={(-1,-1)}] {\textcolor{white}{屑}};
+	\end{tikzpicture}
+	\end{center}
+\end{frame}
+
 \section{程序调试技巧}
 \sectionpage
 
