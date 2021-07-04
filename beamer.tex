@@ -337,11 +337,142 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{center}
 \end{frame}
 
-\section{程序调试技巧}
+\section{程序查错技巧}
 \sectionpage
 
-\begin{frame}{子标题}{副标题}
-	测试页
+\begin{frame}{概述}
+	\begin{itemize}
+		\item 在比赛和实际工作中，总是会不可避免地写出错误 (或有瑕疵) 的代码
+		\item 在软件开发中，通常要为系统测试和调试预留 $50\%$ 以上的时间
+		\item 本节主要介绍现场赛可用的测试和调试手段，其他 (如 Valgrind 等) 可以自行了解
+	\end{itemize}
+\end{frame}
+
+\subsection{评测系统返回的错误信息}
+
+\begin{frame}{评测结果}
+	首先介绍评测系统 (主要是 DOMJudge) 可能返回的错误信息：
+	\begin{itemize}
+		\item COMPILER-ERROR
+		\item TIMELIMIT
+		\item RUN-ERROR
+		\item OUTPUT-LIMIT
+		\item WRONG-ANSWER (以及 NO-OUTPUT)
+	\end{itemize}
+	再次强调：未定义行为可能导致评测返回任何一种错误！
+\end{frame}
+
+\begin{frame}{编译错误}{COMPILER-ERROR}
+	\begin{itemize}
+		\item 指你的程序无法编译成可执行文件
+		\item 一般 OJ 都提供了查看编译器输出消息的方法，照着改即可
+		\item 正式比赛要求选手机器和评测机完全一致，所以几乎不会出现
+		\item 正式比赛 CE 不算罚时
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{时间超限}{TIMELIMIT}
+	\begin{itemize}
+		\item 你的程序跑得太慢了
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{运行错误}{RUN-ERROR}
+	\begin{itemize}
+		\item 你的程序没有以返回值 $0$ 正常退出
+		\item 一般是因为出现了未定义行为
+		\item 也可能是不小心返回了一个非 $0$ 值，比如压行压成了
+			\lstinline{exit(printf("\%d\\n", x));}
+		\item 现场赛使用 DOMJudge，内存超限也报告为运行错误
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{输出超限}{OUTPUT-LIMIT}
+	\begin{itemize}
+		\item 你输出了太多东西，超过了题目的限制 (DOMJudge 默认 $8$ MB)
+		\item 可能是陷入了带输出的死循环
+		\item 也可能是忘了删除调试输出 :)
+		\item 对于某些题目只是 WA 的一种表现形式
+			\begin{itemize}
+				\item 例如：如果有解输出一个 $[0,9]$ 中的整数，
+					如果无解输出
+					\lstinline!"a very very long error message"!，
+					那么如果把很多有解的情况判断成了无解就可能输出超限
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{答案错误}{WRONG-ANSWER}
+	\begin{itemize}
+		\item 你的程序输出和标准答案不一致，或者被 SPJ 判断为错误
+		\item 不同评测系统对于空白字符 (特别是行末空格和文末回车)
+			的处理不一致，如果空白字符有区别可能返回 AC、WA、PE 等不同结果。
+		\item DOMJudge 没有 PE，无 SPJ 的情况下会忽略行末空格和文末回车，
+			但对于空白字符的其他差异会直接返回 WA。
+			建议写输出时遵循一般的规范，每行都以 \lstinline!"\\n"! 结束，
+			行末不要有多余的空格
+		\item 如果完全没有输出，一些评测系统 (包括 DOMJudge) 会返回
+			\lstinline{"NO-OUTPUT"}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{编程错误}
+	我们已经了解了评测结果，下面讨论它们产生的原因，即程序设计竞赛中常见的编程错误。
+\end{frame}
+
+\subsection{栈溢出}
+
+\begin{frame}{什么是栈溢出}
+	\begin{itemize}
+		\item 函数调用的过程中会把一些数据（返回地址，局部变量，部分参数）
+			放入系统的栈空间中，调用结束后再弹出。
+		\item 为了更灵活地为堆和共享库分配内存，Linux 默认将栈空间限制在 8MB。
+		\item 如果栈的大小越过 8MB，内核会发送 \lstinline!SIGSEGV!
+			信号杀死进程。
+		\item Windows 默认栈空间限制为 1MB。
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{栈溢出的表现}
+	\begin{itemize}
+		\item \lstinline{RUN-ERROR}
+		\item 段错误
+		\item \lstinline{segmentation fault (core dumped)}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{预防和排查}
+	\begin{itemize}
+		\item 绝对不要写死递归
+		\item 一些评测系统会调整系统栈空间限制，因此可以大胆使用栈
+			\begin{itemize}
+				\item DOMJudge 的当前版本不限制栈空间，
+					建议区域赛热身赛进行测试
+				\item Codeforces 调整到了 256MB
+				\item 然而大多数在线评测系统都没有调整
+			\end{itemize}
+		\item 可以将本机调成不限制栈空间：
+			\lstinline|ulimit -s unlimited|
+			\begin{itemize}
+				\item 只对当前终端开出来的进程有效
+				\item 这会导致死递归难以排查，甚至卡死系统，
+					可以选择折中地把栈调大一点：
+					\lstinline|ulimit -s 131072| （单位 KB）
+			\end{itemize}
+		\item 对于递归，本机测试开与评测时相同的优化
+			(例如 \lstinline|-O2|)，防止误判
+			(将其他错误当成栈溢出，或者相反)
+		\item 不要将巨大的数组或结构体声明为自动局部变量或按值传递的参数
+			\begin{itemize}
+				\item 可以开全局或者静态变量，通过指针/引用传递
+			\end{itemize}
+		\item 使用非递归写法，或者显式开栈模拟递归
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{汇编开栈}
+	暗黑魔法，使用时自负风险。
+	\lstinputlisting[language=C++]{code/asm_stack.cc}
 \end{frame}
 
 {\xdbg%末页致谢
