@@ -1,0 +1,203 @@
+%!TEX program = lualatex
+\documentclass[10pt,mathserif]{beamer}
+
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\setmainjfont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans CJK SC,
+    BoldFeatures={RawFeature={instance=Bold}},
+]{Noto Sans CJK SC}
+
+\setmonofont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans Mono,
+    BoldFeatures={RawFeature={instance=Bold}},
+]{Noto Sans Mono}
+
+\definecolor{xdublue}{RGB}{0,65,130}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+keywordstyle=\color{xdublue},
+numbers=left,
+numberstyle=\tiny,
+frame=leftline,
+tabsize=4
+}
+
+\lstdefinestyle{term}
+{basicstyle=\ttfamily, numbers=none, frame=single, breaklines=true,
+moredelim={[is][keywordstyle]{@@}{@@}}}
+
+\newcommand{\lstcode}[1] { \lstinputlisting[language=C++]{code/#1} }
+\newcommand{\lstterm}[1] { \lstinputlisting[style=term]{code/#1} }
+
+\usepackage{ulem}
+
+\usetheme[xdblue]{XDUstyle}
+
+\title{Competitive Programming 101}
+\institute{西安电子科技大学程序设计竞赛实训基地}
+\author{席若尧}
+\date{2021 年 7 月 5 日}
+	
+\begin{document}%
+{\xdbg \frame[plain,noframenumbering]{\titlepage}}
+
+\begin{frame}{内容}
+	\tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{ICPC 环境简介}
+\sectionpage
+
+\begin{frame}{基本认知}
+	\begin{itemize}
+		\item 程序设计竞赛与竞技体育/电子竞技类似
+		\item 决定比赛成绩的因素有：天赋、训练、运气
+		\item 不想训练的话也有很多低水平比赛可以打 (校赛，省赛，CSP 等)
+		\item 想好好打的话，要对这项比赛有基本的认同感
+		\item 尽量避免自视高贵/发表暴论
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{工作环境}
+	\begin{itemize}
+		\item Ubuntu GNU/Linux
+			\begin{itemize}
+				\item 没有 root 权限
+			\end{itemize}
+		\item GCC
+		\item OpenJDK
+		\item Python 3 or PyPy 3
+		\item Vim, Emacs, Gedit, Code::Blocks 等
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{团队配合}
+	\begin{itemize}
+		\item 三人一机
+		\item 可以打印代码
+		\item 实力 (训练量) 是配合的基础
+	\end{itemize}
+\end{frame}
+
+\section{程序的行为和编译优化}
+\sectionpage
+
+\begin{frame}{现状}
+	\begin{itemize}
+		\item 本节内容应该是程序设计基础课程的一部分，但是懂的都懂
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=.3\textwidth]{img/shit2.jpg}
+	\end{center}
+\end{frame}
+
+\begin{frame}{现状}
+	\begin{itemize}
+		\item “你不确定的话就写个程序跑一下吧。”
+			\pause
+		\item 要是化学老师这么教课，实验室早炸上天了
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{现状}
+	\begin{itemize}
+		\item “我打了 3 年 OI 还能不知道自己的程序啥行为？”
+			\pause
+		\item 众所周知 NOIP 不开 \texttt{-O2}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{程序的行为}
+	C 标准 (\texttt{ISO/IEC 9899:2011} \S 5.1.2.3 p6) 规定，
+	程序的\textbf{可观测行为}包括：
+	\begin{itemize}
+		\item 访问 \texttt{volatile} 变量
+		\item 写入文件
+		\item 操作交互式输入输出设备
+	\end{itemize}
+	实现 (在实践中由编译器和运行库组成) 只需要正确实现可观测行为。
+	编译器可以在保证可观测行为不变的前提下，通过调整生成的机器代码，
+	使得程序变得更小或更快。
+\end{frame}
+
+\begin{frame}[fragile]{例}{Hello world}
+	\lstcode{hw.cc}
+\end{frame}
+
+\begin{frame}[fragile]{例}{Hello World}
+	生成的汇编代码根本没有 \texttt{printf}？
+	\lstinputlisting[style=term,emph={puts},emphstyle=\color{xdublue}]
+	{code/hw.out}
+\end{frame}
+
+\begin{frame}[fragile]{例}{取模}
+	\lstcode{mod.cc}
+\end{frame}
+
+\begin{frame}[fragile]{例}{取模}
+	没有除法指令？
+	\lstterm{mod.out}
+\end{frame}
+
+\begin{frame}[fragile]{例}{取模 (误)}
+	\lstcode{mod_bad.cc}
+\end{frame}
+
+\begin{frame}[fragile]{例}{取模 (误)}
+	\lstinputlisting[style=term,emph={idivl},emphstyle=\color{xdublue}]
+	{code/mod_bad.out}
+	\begin{itemize}
+		\item 看上去简洁很多？
+		\item 悲剧的是，这条除法指令比之前的一大堆加起来都慢。
+		\item 实际做题时，因为忘加这个 \texttt{const}，可能引入
+			$50\%$ 至 $200\%$ 的时间代价。
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{strlen (运气好)}
+	\lstcode{strlen-1.cc}
+	\begin{itemize}
+		\item 目测是 $\mathcal{O}(n^2)$ 的，会 TLE？
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{strlen (运气好)}
+	\lstterm{strlen-1.out}
+	\begin{itemize}
+		\item 然而跑得飞快
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{strlen (运气差)}
+	\lstcode{strlen-2.cc}
+	\begin{itemize}
+		\item 就改个大小写，不会出大问题吧
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{strlen (运气差)}
+	\lstterm{strlen-2.out}
+	\begin{itemize}
+		\item 人都没了
+		\item 编译器的能力是有极限的\sout{，所以我不做编译器辣！}
+	\end{itemize}
+\end{frame}
+
+\section{程序调试技巧}
+\sectionpage
+
+\begin{frame}{子标题}{副标题}
+	测试页
+\end{frame}
+
+{\xdbg%末页致谢
+\begin{frame}[plain,noframenumbering]
+ \finalpage{{\huge 感谢观看！}}
+\end{frame}}
+
+\end{document}
