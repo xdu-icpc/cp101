@@ -684,8 +684,8 @@ for (auto it = S.begin(); it != S.end(); )
 	\end{itemize}
 \end{frame}
 
-\subsection{浮点精度问题}
-\begin{frame}{浮点精度问题}
+\subsection{浮点问题}
+\begin{frame}{精度问题}
 	众所周知，浮点数的精度是有限的。
 	\begin{itemize}
 		\item \lstinline!float!：23 位
@@ -715,6 +715,23 @@ for (auto it = S.begin(); it != S.end(); )
 				\item 避免除法
 				\item 如果一定要用除法，写分数类
 			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{特殊浮点值}
+	\begin{itemize}
+		\item INF：无限大量 (有正负)
+		\item 0 (有正负)
+		\item NaN
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{典 中 典}
+	\begin{itemize}
+		\item 某次比赛某出题人写了这样的 SPJ，有什么问题？
+			\lstcode{spj-hacked-by-nan.cc}
+			\pause
+		\item 选手只要输出 $a = b = 0$ 就 AC 辣！
 	\end{itemize}
 \end{frame}
 
