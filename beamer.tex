@@ -159,6 +159,23 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 	\end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{例}{strstr (Linux)}
+	\lstcode{strstr.cc}
+	\begin{itemize}
+		\item 这题不用 KMP 能过？
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{例}{strstr (Linux)}
+	\lstterm{strstr.out}
+	\begin{itemize}
+		\item 在 Linux 上跑得飞快
+		\item Glibc 的 \lstinline{strstr} 是时间
+			$\mathcal{O}(n + m)$，空间 $\mathcal{O}(1)$ 的高级算法，
+			而且是高度优化的手写汇编代码
+	\end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{例}{strlen (运气好)}
 	\lstcode{strlen-1.cc}
 	\begin{itemize}

@@ -6,6 +6,7 @@ STYFILES = beamerthemeXDUstyle.sty      \
 OUTFILES = hw.out                  \
 		   mod.out                 \
 		   mod_bad.out             \
+		   strstr.out              \
 		   strlen-1.out            \
 		   strlen-2.out            \
 
