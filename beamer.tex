@@ -735,11 +735,29 @@ for (auto it = S.begin(); it != S.end(); )
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{排查}
+	\begin{itemize}
+		\item 有时候很难排查出最早在哪里算出了 INF 或者 NaN
+		\item 在程序开始时加一行：
+			\lstinline{feenableexcept(FE_ALL_EXCEPT);}
+			就能让你的程序在算出 INF 或者 NaN 的时候直接崩溃，
+			然后用调试器就能看具体是哪一行了
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{例子}
+	\lstcode{feenableexcept.cc}
+\end{frame}
+
+\begin{frame}{结果}
+	\lstterm{feenableexcept.out}
+\end{frame}
+
 \subsection{杂项}
 \begin{frame}{浮点异常}
 	\begin{itemize}
 		\item \lstinline{floating point exception (core dumped)}
-		\item 和浮点数并没有什么关系……
+		\item 如果没开 \lstinline{feenableexcept}，则和浮点数并没有什么关系
 		\item 意味着出现了除以 $0$ 或者模 $0$
 		\item 直接用调试器看在哪里除了 $0$ 就行了
 	\end{itemize}

@@ -10,7 +10,8 @@ OUTFILES = hw.out                  \
 		   strlen-1.out            \
 		   strlen-2.out            \
 		   set_invalidate.out      \
-		   vec_invalidate.out
+		   vec_invalidate.out      \
+		   feenableexcept.out
 
 GENERATED = *.aux *.fdb_latexmk *.fls *.log *.nav *.out *.pdf *.snm *.toc \
 			*.vrb
