@@ -742,7 +742,7 @@ for (auto it = S.begin(); it != S.end(); )
 	\begin{itemize}
 		\item 有时候很难排查出最早在哪里算出了 INF 或者 NaN
 		\item 在程序开始时加一行：
-			\lstinline{feenableexcept(FE_ALL_EXCEPT);}
+			\lstinline{feenableexcept(FE_INVALID | FE_OVERFLOW);}
 			就能让你的程序在算出 INF 或者 NaN 的时候直接崩溃，
 			然后用调试器就能看具体是哪一行了
 	\end{itemize}
