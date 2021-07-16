@@ -41,9 +41,10 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 \usetheme[xdblue]{XDUstyle}
 
 \title{Competitive Programming 101}
+\subtitle{重录}
 \institute{西安电子科技大学程序设计竞赛实训基地}
 \author{席若尧}
-\date{2021 年 7 月 5 日}
+\date{2021 年 7 月 20 日}
 	
 \begin{document}%
 {\xdbg \frame[plain,noframenumbering]{\titlepage}}
@@ -768,7 +769,7 @@ for (auto it = S.begin(); it != S.end(); )
 \begin{frame}{误用 STL}
 	\begin{itemize}
 		\item 提供给 \lstinline|sort| 或者 \lstinline|set|
-			的比较函数是假的？
+			的比较函数是假的 (不是\textbf{严格弱序})？
 		\item 在没排序的数组上执行 \lstinline|lower_bound| 等二分查找函数？
 		\item 可以打开 C++ 运行库的运行时检查，来寻找可能的这种错误
 	\end{itemize}
