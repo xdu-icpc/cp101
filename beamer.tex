@@ -44,7 +44,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 \subtitle{重录}
 \institute{西安电子科技大学程序设计竞赛实训基地}
 \author{席若尧}
-\date{2021 年 7 月 20 日}
+\date{2021 年 7 月 17 日}
 	
 \begin{document}%
 {\xdbg \frame[plain,noframenumbering]{\titlepage}}
@@ -543,7 +543,7 @@ moredelim={[is][keywordstyle]{@@}{@@}}}
 				\item 可以构造出来，例如
 					\lstinline[language=C++]!sort(a, a+n);!
 				\item 可以用于偏移运算，例如
-					\lstinline[language=C++]!int *p = a+n; a[-2];!
+					\lstinline[language=C++]!int *p = a+n; p[-2];!
 				\item 不能解引用，否则引发未定义行为
 			\end{itemize}
 		\item 越出数组界限的指针
@@ -951,8 +951,9 @@ for (auto it = S.begin(); it != S.end(); )
 		\item n (next)
 		\item s (step)
 		\item c (continue)
+		\item l (list) 行号/函数名
 		\item p (print) 表达式
-		\item d (disp) 表达式
+		\item disp (display) 表达式
 		\item cond (condition) 断点编号 \  表达式
 		\item bt (backtrace)
 		\item fr (frame) 栈帧编号
