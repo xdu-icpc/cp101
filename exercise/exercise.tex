@@ -1,0 +1,62 @@
+\documentclass[a4]{article}
+
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\setmainjfont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans CJK SC,
+    BoldFeatures={RawFeature={instance=Bold}},
+]{Noto Sans CJK SC}
+
+\setmonofont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans Mono,
+    BoldFeatures={RawFeature={instance=Bold}},
+    ItalicFont=Noto Sans Mono,
+    ItalicFeatures={RawFeature={instance=Italic}},
+]{Noto Sans Mono}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\ttfamily,
+keywordstyle=\textbf,
+numbers=left,
+numberstyle=\tiny,
+frame=leftline,
+tabsize=4
+}
+
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\begin{itemize}
+	\item 姓名：\underline{\quad~~~~~~~~~~~~~~~}
+	\item 学号：\underline{\quad~~~~~~~~~~~~~~~}
+\end{itemize}
+
+\section{不定项选择题}
+
+请将答案写在题目左侧，每题 1 分，多选、少选、错选都不得分。
+
+\input{p1.tex}
+\input{p2.tex}
+\input{p3.tex}
+\input{p4.tex}
+\input{p5.tex}
+\input{p6.tex}
+
+\section{填空题}
+
+共 4 空，每空 1 分。
+
+\input{p7.tex}
+\input{p8.tex}
+
+\section{简答题}
+
+\input{p9.tex}
+\input{p10.tex}
+\input{p11.tex}
+
+\end{document}

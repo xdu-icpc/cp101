@@ -31,9 +31,18 @@ beamer: $(STYFILES)
 	make -C code $(OUTFILES)
 	latexmk --lualatex beamer
 
+.PHONY: exercise
+exercise:
+	make -C exercise t.pdf
+
+.PHONY: beamer-recitation
+beamer-recitation:
+	latexmk --lualatex beamer-recitation
+
 .PHONY: clean
 clean:
 	rm -fv $(GENERATED)
+	make -C homework clean
 	make -C code clean
 
 .PHONY: .gitignore
