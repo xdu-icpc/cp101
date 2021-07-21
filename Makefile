@@ -38,7 +38,7 @@ exercise:
 	make -C exercise
 
 .PHONY: recitation
-recitation:
+recitation: $(STYFILES)
 	latexmk --lualatex recitation
 
 .PHONY: clean
