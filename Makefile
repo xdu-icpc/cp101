@@ -26,6 +26,8 @@ OUTFILES = hw.out                   \
 GENERATED = *.aux *.fdb_latexmk *.fls *.log *.nav *.out *.pdf *.snm *.toc \
 			*.vrb
 
+all: beamer exercise recitation
+
 .PHONY: beamer
 beamer: $(STYFILES)
 	make -C code $(OUTFILES)
@@ -33,16 +35,16 @@ beamer: $(STYFILES)
 
 .PHONY: exercise
 exercise:
-	make -C exercise t.pdf
+	make -C exercise
 
-.PHONY: beamer-recitation
-beamer-recitation:
-	latexmk --lualatex beamer-recitation
+.PHONY: recitation
+recitation:
+	latexmk --lualatex recitation
 
 .PHONY: clean
 clean:
 	rm -fv $(GENERATED)
-	make -C homework clean
+	make -C exercise clean
 	make -C code clean
 
 .PHONY: .gitignore

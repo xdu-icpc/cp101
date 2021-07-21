@@ -1,0 +1,175 @@
+%!TEX program = lualatex
+\documentclass[10pt,mathserif]{beamer}
+
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+\setmainjfont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans CJK SC,
+    BoldFeatures={RawFeature={instance=Bold}},
+]{Noto Sans CJK SC}
+
+\setmonofont[
+    RawFeature={instance=Regular},
+    BoldFont=Noto Sans Mono,
+    BoldFeatures={RawFeature={instance=Bold}},
+    ItalicFont=Noto Sans Mono,
+    ItalicFeatures={RawFeature={instance=Italic}},
+]{Noto Sans Mono}
+
+\definecolor{xdublue}{RGB}{0,65,130}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+keywordstyle=\color{xdublue},
+numbers=left,
+numberstyle=\tiny,
+frame=leftline,
+tabsize=4,
+inputpath=exercise
+}
+
+\lstdefinestyle{term}
+{basicstyle=\ttfamily, numbers=none, frame=single, breaklines=true,
+moredelim={[is][keywordstyle]{@@}{@@}}}
+
+\newcommand{\lstcode}[1] { \lstinputlisting[language=C++]{code/#1} }
+\newcommand{\lstterm}[1] { \lstinputlisting[style=term]{code/#1} }
+
+\usepackage{ulem}
+
+\usetheme[xdblue]{XDUstyle}
+
+\title{Competitive Programming 101}
+\subtitle{习题讲解}
+\institute{西安电子科技大学程序设计竞赛实训基地}
+\author{席若尧}
+\date{2021 年 7 月 21 日}
+	
+\begin{document}%
+{\xdbg \frame[plain,noframenumbering]{\titlepage}}
+
+\newcommand{\paragraph}[1]{}
+
+\begin{frame}{第 1 题}
+	\input{exercise/p1.tex}
+	\pause
+	\begin{itemize}
+		\item 选 AD
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 2 题}
+	\input{exercise/p2.tex}
+	\pause
+	\begin{itemize}
+		\item 选 ABCD
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 3 题}
+	\input{exercise/p3.tex}
+\end{frame}
+
+\begin{frame}{第 3 题}
+	\begin{itemize}
+		\item 选 AC
+		\item 就是上课讲的 \lstinline{Point p(read(), read());} 的翻版
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 4 题}
+	\input{exercise/p4.tex}
+	\pause
+	\begin{itemize}
+		\item 选 ABCD
+		\item 这是一个未定义行为，所以什么都可能发生
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 5 题}
+	\input{exercise/p5.tex}
+	\pause
+	选 C
+	\begin{itemize}
+		\item B 虽然是编译错误，但并不违反语法
+		\item A 完全不违反语法，而且严格来说是未定义行为
+		\item D 甚至都不算“错误”……
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 6 题}
+	\input{exercise/p6.tex}
+	\pause
+	选 BC
+	\begin{itemize}
+		\item D 不会有人选罢……
+		\item 只选 C 是不够的，因为 \lstinline{int a = 1ll * b * c;}
+			这样的东西并不是未定义行为，但是也会导致你 WA
+		\item A 需要较大的工作量，而且有时候 (比如没初始化变量)
+			会出现加了输出以后就无法重现问题的现象
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 7 题}
+	\input{exercise/p7.tex}
+	\pause
+	以下三项写两个就行：
+	\begin{itemize}
+		\item 暴力可以跑出来
+		\item 方便后续调试
+		\item 容易触发边界条件
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 8 题}
+	\input{exercise/p8.tex}
+	\pause
+	\begin{itemize}
+		\item 严格弱序 (因为上课讲错了，所以写严格偏序也算对)
+		\item 严格全序
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 9 题}
+	\input{exercise/p9.tex}
+	\pause
+	\begin{itemize}
+		\item 输出 0
+		\item 0.0 / 0.0 在 IEEE-754 下是 NaN
+		\item NaN 与所有 \lstinline{double} 值用小于号比较都是
+			\lstinline{false}，故可以认为它与所有值等价，
+			\lstinline{std::set<T>::erase} 要求删除所有等价值
+		\item NaN 的比较不满足严格弱序，
+			但是严格弱序只要对 \lstinline{std::set<T>}
+			内部元素成立即可，因此不是 UB
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 10 题}
+	\input{exercise/p10.tex}
+	\pause
+	\begin{itemize}
+		\item 例：A + B，$10^7$ 组数据
+		\item “求 $10^7$ 个数之和” 是不行的……
+		\item “倒序输出 $10^7$ 个数” 也是不行的……
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{第 11 题}
+	\input{exercise/p11.tex}
+	\pause
+	\begin{itemize}
+		\item 最坏：$T(n, m) = \Theta((n - m + 1)m)$
+		\item 严格来说这个东西不能写成 $\Theta(nm)$
+			（写成 $\Theta(n^2)$ 倒是能说通)，
+			但是阅卷比较松……
+		\item 期望：$$T(n, m) = \sum_{k=0}^{n - m} \sum_{j=0}^{m - 1}
+			|\Sigma|^{-j} = (n - m + 1)
+			\frac{1 - |\Sigma|^{-m}}{1 - |\Sigma|^{-1}} =
+			\Theta(n - m + 1)$$
+	\end{itemize}
+\end{frame}
+
+\end{document}
