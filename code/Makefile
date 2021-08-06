@@ -4,7 +4,7 @@ all:
 %.out: %.sh %.cc gen.py
 	./gen.py $< $@
 
-GENERATED = *.gcda *.gcno *.gcov *.out *.s *.exe *.in
+GENERATED = *.gcda *.gcno *.gcov *.out *.s *.exe *.in *.o
 
 .PHONY: .gitignore
 .gitignore:
